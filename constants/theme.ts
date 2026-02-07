@@ -1,29 +1,48 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * MewScore Theme - Minimaliste Apple Style
+ * Bleu électrique comme accent, mode clair par défaut
  */
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Couleur principale - Bleu électrique
+const primaryBlue = '#3B82F6';
+const primaryBlueLight = '#60A5FA';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: '#1F2937',
+    textSecondary: '#6B7280',
+    background: '#FFFFFF',
+    backgroundSecondary: '#F9FAFB',
+    card: '#FFFFFF',
+    cardElevated: '#FFFFFF',
+    tint: primaryBlue,
+    icon: '#9CA3AF',
+    tabIconDefault: '#9CA3AF',
+    tabIconSelected: primaryBlue,
+    border: '#E5E7EB',
+    shadow: '#000000',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#F9FAFB',
+    textSecondary: '#9CA3AF',
+    background: '#0F172A',
+    backgroundSecondary: '#1E293B',
+    card: '#1E293B',
+    cardElevated: '#334155',
+    tint: primaryBlueLight,
+    icon: '#64748B',
+    tabIconDefault: '#64748B',
+    tabIconSelected: primaryBlueLight,
+    border: '#334155',
+    shadow: '#000000',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
   },
 };
 

@@ -1,30 +1,46 @@
 import { useEffect } from 'react';
-import { ThemeProvider, DarkTheme } from '@react-navigation/native';
+import { ThemeProvider as NavigationThemeProvider, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
 import { OnboardingProvider } from '@/contexts/onboarding-context';
+import { ThemeProvider, useTheme } from '@/contexts/theme-context';
 import { initRevenueCat } from '@/services/revenuecat-init';
+import { Colors } from '@/constants/theme';
 
-// Theme sombre personnalise base sur DarkTheme pour avoir les fonts
-const MewScoreTheme = {
+export const unstable_settings = {
+  anchor: '(tabs)',
+};
+
+// Navigation themes
+const LightNavigationTheme = {
+  ...DefaultTheme,
+  dark: false,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: Colors.light.tint,
+    background: Colors.light.background,
+    card: Colors.light.card,
+    text: Colors.light.text,
+    border: Colors.light.border,
+    notification: Colors.light.tint,
+  },
+};
+
+const DarkNavigationTheme = {
   ...DarkTheme,
   dark: true,
   colors: {
     ...DarkTheme.colors,
-    primary: '#D4AF37',
-    background: '#000000',
-    card: '#1C1C1E',
-    text: '#FFFFFF',
-    border: '#2C2C2E',
-    notification: '#D4AF37',
+    primary: Colors.dark.tint,
+    background: Colors.dark.background,
+    card: Colors.dark.card,
+    text: Colors.dark.text,
+    border: Colors.dark.border,
+    notification: Colors.dark.tint,
   },
-};
-
-export const unstable_settings = {
-  anchor: '(tabs)',
 };
 
 function NavigationGuard() {
@@ -39,12 +55,10 @@ function NavigationGuard() {
     const inAuth = segments[0] === '(auth)';
 
     if (!isAuthenticated) {
-      // Utilisateur non connecte → onboarding (sauf s'il y est deja ou sur auth)
       if (!inOnboarding && !inAuth) {
         router.replace('/onboarding');
       }
     } else {
-      // Utilisateur connecte → aller aux tabs si sur onboarding/auth
       if (inOnboarding || inAuth) {
         router.replace('/(tabs)');
       }
@@ -55,16 +69,21 @@ function NavigationGuard() {
 }
 
 function RootLayoutContent() {
+  const { isDark } = useTheme();
+  const colors = isDark ? Colors.dark : Colors.light;
+
   useEffect(() => {
     initRevenueCat();
   }, []);
 
   return (
-    <ThemeProvider value={MewScoreTheme}>
+    <NavigationThemeProvider value={isDark ? DarkNavigationTheme : LightNavigationTheme}>
       <NavigationGuard />
       <Stack
         screenOptions={{
-          contentStyle: { backgroundColor: '#000000' },
+          contentStyle: { backgroundColor: colors.background },
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.text,
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -76,17 +95,19 @@ function RootLayoutContent() {
         <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
-      <StatusBar style="light" />
-    </ThemeProvider>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+    </NavigationThemeProvider>
   );
 }
 
 export default function RootLayout() {
   return (
-    <OnboardingProvider>
-      <AuthProvider>
-        <RootLayoutContent />
-      </AuthProvider>
-    </OnboardingProvider>
+    <ThemeProvider>
+      <OnboardingProvider>
+        <AuthProvider>
+          <RootLayoutContent />
+        </AuthProvider>
+      </OnboardingProvider>
+    </ThemeProvider>
   );
 }
