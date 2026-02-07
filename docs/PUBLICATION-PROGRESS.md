@@ -18,6 +18,8 @@ Français par défaut (anglais prévu pour v2)
 - [x] **Renommage GlowScore → MewScore** (app.json, code, textes)
 - [x] **Politique de confidentialité créée** (`docs/privacy-policy.html`)
 - [x] **Conditions d'utilisation créées** (`docs/terms-of-service.html`)
+- [x] **Code pushé sur GitHub** (https://github.com/Dacaci/MewScore)
+- [x] **GitHub Pages activé** - Documents légaux en ligne
 
 ---
 
@@ -31,12 +33,13 @@ Français par défaut (anglais prévu pour v2)
 
 ## A faire après vérification
 
-### 1. Héberger les documents légaux
-- [ ] Héberger `privacy-policy.html` sur un site web (GitHub Pages, Netlify, etc.)
-- [ ] Héberger `terms-of-service.html`
-- [ ] Noter les URLs pour les formulaires des stores
+### 1. Nouveau build (OBLIGATOIRE - package changé)
+```bash
+eas build --platform android --profile production
+```
 
 ### 2. Google Play Console
+- [ ] Uploader le nouveau `.aab` (avec package `com.mewscore.app`)
 - [ ] Créer l'abonnement mensuel
   - ID produit : `mewscore_monthly`
   - Prix : 4,99€/mois
@@ -46,7 +49,7 @@ Français par défaut (anglais prévu pour v2)
 - [ ] Remplir la fiche Play Store (description, screenshots, icône)
 - [ ] Remplir le formulaire "Sécurité des données"
 - [ ] Remplir le questionnaire de contenu
-- [ ] Ajouter l'URL de la politique de confidentialité
+- [ ] Ajouter l'URL de la politique de confidentialité (voir ci-dessous)
 - [ ] Ajouter testeurs (ton email en License Testing)
 - [ ] Publier en test interne
 
@@ -59,18 +62,20 @@ Français par défaut (anglais prévu pour v2)
 - [ ] Configurer les Offerings (packages "monthly" et "pack_15")
 - [ ] Remplacer la clé test par la clé production dans .env
 
-### 4. Nouveau build
-- [ ] Refaire un build EAS avec le nouveau nom/package
-  ```bash
-  eas build --platform android --profile production
-  ```
-- [ ] Uploader le nouveau .aab sur Google Play
-
-### 5. Tester les paiements
+### 4. Tester les paiements
 - [ ] S'ajouter en License Testing (Google Play Console)
 - [ ] Tester l'achat abonnement
 - [ ] Tester l'achat pack
 - [ ] Vérifier que Firestore se met à jour
+
+---
+
+## Documents légaux (EN LIGNE)
+
+| Document | URL |
+|----------|-----|
+| **Politique de confidentialité** | https://dacaci.github.io/MewScore/docs/privacy-policy.html |
+| **Conditions d'utilisation** | https://dacaci.github.io/MewScore/docs/terms-of-service.html |
 
 ---
 
@@ -96,14 +101,9 @@ EXPO_PUBLIC_REVENUECAT_API_KEY=test_nNnMBVFdsTTMmhQSgFXDjKFqlJi
 - Abonnement : `monthly`, `$rc_monthly`, `default`
 - Pack : `pack_15`, `pack`, `onetime`
 
----
-
-## Documents légaux
-
-| Document | Fichier | URL (à définir) |
-|----------|---------|-----------------|
-| Politique de confidentialité | `docs/privacy-policy.html` | https://... |
-| Conditions d'utilisation | `docs/terms-of-service.html` | https://... |
+### GitHub
+- Repo : https://github.com/Dacaci/MewScore
+- GitHub Pages : activé
 
 ---
 
@@ -116,4 +116,5 @@ EXPO_PUBLIC_REVENUECAT_API_KEY=test_nNnMBVFdsTTMmhQSgFXDjKFqlJi
 ---
 
 ## Contact
-Reviens sur Claude Code quand le compte marchand est vérifié pour continuer la configuration.
+- Email support : pathlink8@gmail.com
+- Reviens sur Claude Code quand le compte marchand est vérifié pour continuer la configuration.
