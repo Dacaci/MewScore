@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -24,31 +24,27 @@ export default function LoginScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { login, loginWithGoogle, isLoading } = useAuth();
-  const { response, promptAsync, isReady } = useGoogleAuth();
+  const { signIn, isReady } = useGoogleAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleGoogleSignIn = useCallback(async (idToken: string) => {
+  const handleGoogleSignIn = async () => {
     try {
-      await loginWithGoogle(idToken);
-      router.replace('/(tabs)');
+      const result = await signIn();
+      if (result?.idToken) {
+        await loginWithGoogle(result.idToken);
+        router.replace('/(tabs)');
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
       Alert.alert('Erreur Google', errorMessage);
     }
-  }, [loginWithGoogle, router]);
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      handleGoogleSignIn(id_token);
-    }
-  }, [response, handleGoogleSignIn]);
+  };
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+      Alert.alert('Erreur', 'Remplis tous les champs.');
       return;
     }
 
@@ -71,13 +67,13 @@ export default function LoginScreen() {
             Connexion
           </ThemedText>
           <ThemedText style={styles.subtitle}>
-            Connectez-vous pour acceder a GlowScore
+            Connecte-toi pour accéder à MewScore
           </ThemedText>
         </View>
 
         <View style={styles.form}>
           <GoogleSignInButton
-            onPress={() => promptAsync()}
+            onPress={handleGoogleSignIn}
             disabled={!isReady || isLoading}
           />
 
@@ -93,12 +89,13 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colorScheme === 'dark' ? '#2a2a2a' : '#f5f5f5',
+                  backgroundColor: colors.card,
                   color: colors.text,
+                  borderColor: colors.border,
                 },
               ]}
               placeholder="votre@email.com"
-              placeholderTextColor={colors.icon}
+              placeholderTextColor={colors.textSecondary}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -113,12 +110,13 @@ export default function LoginScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colorScheme === 'dark' ? '#2a2a2a' : '#f5f5f5',
+                  backgroundColor: colors.card,
                   color: colors.text,
+                  borderColor: colors.border,
                 },
               ]}
               placeholder="Votre mot de passe"
-              placeholderTextColor={colors.icon}
+              placeholderTextColor={colors.textSecondary}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -126,7 +124,7 @@ export default function LoginScreen() {
           </View>
 
           <Button
-            title={isLoading ? 'Connexion...' : 'Se connecter'}
+            title={isLoading ? 'Connexion…' : 'Se connecter'}
             onPress={handleLogin}
             disabled={isLoading}
             style={styles.button}
@@ -138,7 +136,7 @@ export default function LoginScreen() {
           <Link href="/(auth)/register" asChild>
             <Pressable>
               <ThemedText style={[styles.link, { color: colors.tint }]}>
-                Creer un compte
+                Créer un compte
               </ThemedText>
             </Pressable>
           </Link>
@@ -194,6 +192,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
+    borderWidth: 1,
   },
   button: {
     marginTop: 12,

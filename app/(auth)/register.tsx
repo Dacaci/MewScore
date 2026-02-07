@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -15,41 +15,44 @@ import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
 import { GoogleSignInButton } from '@/components/ui/google-sign-in-button';
 import { useAuth } from '@/contexts/auth-context';
+import { useOnboarding } from '@/contexts/onboarding-context';
 import { useGoogleAuth } from '@/hooks/use-google-auth';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { UserGender } from '@/types/firebase';
 
 export default function RegisterScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { register, loginWithGoogle, isLoading } = useAuth();
-  const { response, promptAsync, isReady } = useGoogleAuth();
+  const { data: onboardingData, reset: resetOnboarding } = useOnboarding();
+  const { signIn, isReady } = useGoogleAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleGoogleSignIn = useCallback(async (idToken: string) => {
+  const handleGoogleSignIn = async () => {
     try {
-      await loginWithGoogle(idToken);
-      router.replace('/(tabs)');
+      const result = await signIn();
+      if (result?.idToken) {
+        await loginWithGoogle(result.idToken, {
+          gender: onboardingData.gender as UserGender | null,
+          age: onboardingData.age,
+        });
+        resetOnboarding();
+        router.replace('/(tabs)');
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
       Alert.alert('Erreur Google', errorMessage);
     }
-  }, [loginWithGoogle, router]);
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      handleGoogleSignIn(id_token);
-    }
-  }, [response, handleGoogleSignIn]);
+  };
 
   const handleRegister = async () => {
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+      Alert.alert('Erreur', 'Remplis tous les champs.');
       return;
     }
 
@@ -59,12 +62,16 @@ export default function RegisterScreen() {
     }
 
     if (password.length < 6) {
-      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caracteres');
+      Alert.alert('Erreur', 'Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
 
     try {
-      await register(email.trim(), password);
+      await register(email.trim(), password, {
+        gender: onboardingData.gender as UserGender | null,
+        age: onboardingData.age,
+      });
+      resetOnboarding();
       router.replace('/(tabs)');
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue';
@@ -79,16 +86,16 @@ export default function RegisterScreen() {
         style={styles.keyboardView}>
         <View style={styles.header}>
           <ThemedText type="title" style={styles.title}>
-            Creer un compte
+            Créer un compte
           </ThemedText>
           <ThemedText style={styles.subtitle}>
-            Rejoignez GlowScore et obtenez 3 scans gratuits
+            Rejoins MewScore et obtiens 3 scans gratuits
           </ThemedText>
         </View>
 
         <View style={styles.form}>
           <GoogleSignInButton
-            onPress={() => promptAsync()}
+            onPress={handleGoogleSignIn}
             disabled={!isReady || isLoading}
             title="S'inscrire avec Google"
           />
@@ -105,12 +112,13 @@ export default function RegisterScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colorScheme === 'dark' ? '#2a2a2a' : '#f5f5f5',
+                  backgroundColor: colors.card,
                   color: colors.text,
+                  borderColor: colors.border,
                 },
               ]}
               placeholder="votre@email.com"
-              placeholderTextColor={colors.icon}
+              placeholderTextColor={colors.textSecondary}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -125,12 +133,13 @@ export default function RegisterScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colorScheme === 'dark' ? '#2a2a2a' : '#f5f5f5',
+                  backgroundColor: colors.card,
                   color: colors.text,
+                  borderColor: colors.border,
                 },
               ]}
-              placeholder="Minimum 6 caracteres"
-              placeholderTextColor={colors.icon}
+              placeholder="Minimum 6 caractères"
+              placeholderTextColor={colors.textSecondary}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -143,12 +152,13 @@ export default function RegisterScreen() {
               style={[
                 styles.input,
                 {
-                  backgroundColor: colorScheme === 'dark' ? '#2a2a2a' : '#f5f5f5',
+                  backgroundColor: colors.card,
                   color: colors.text,
+                  borderColor: colors.border,
                 },
               ]}
               placeholder="Confirmez votre mot de passe"
-              placeholderTextColor={colors.icon}
+              placeholderTextColor={colors.textSecondary}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               secureTextEntry
@@ -156,7 +166,7 @@ export default function RegisterScreen() {
           </View>
 
           <Button
-            title={isLoading ? 'Creation...' : 'Creer mon compte'}
+            title={isLoading ? 'Création…' : 'Créer mon compte'}
             onPress={handleRegister}
             disabled={isLoading}
             style={styles.button}
@@ -164,7 +174,7 @@ export default function RegisterScreen() {
         </View>
 
         <View style={styles.footer}>
-          <ThemedText style={styles.footerText}>Deja un compte ?</ThemedText>
+          <ThemedText style={styles.footerText}>Déjà un compte ?</ThemedText>
           <Link href="/(auth)/login" asChild>
             <Pressable>
               <ThemedText style={[styles.link, { color: colors.tint }]}>
@@ -224,6 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
+    borderWidth: 1,
   },
   button: {
     marginTop: 8,

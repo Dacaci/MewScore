@@ -1,18 +1,25 @@
 {
   "expo": {
-    "name": "GlowScore",
-    "slug": "GlowScore",
+    "name": "MewScore",
+    "slug": "MewScore",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "glowscore",
+    "scheme": "mewscore",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mewscore.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "MewScore a besoin d'accéder à la caméra pour analyser ton visage.",
+        "NSPhotoLibraryUsageDescription": "MewScore a besoin d'accéder à ta photothèque pour choisir une photo à analyser.",
+        "NSPhotoLibraryAddUsageDescription": "Pour enregistrer une photo."
+      }
     },
     "android": {
-      "package": "com.glowscore.app",
+      "package": "com.mewscore.app",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -35,11 +42,10 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "dark": { "backgroundColor": "#000000" }
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,
