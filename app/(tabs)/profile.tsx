@@ -1,4 +1,5 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/themed-text';
@@ -8,29 +9,98 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
 import { Colors } from '@/constants/theme';
+import { Layout } from '@/constants/layout';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { updateUserProfile } from '@/services/auth-service';
+import { resetProgression } from '@/services/scan-service';
+import { UserGender } from '@/types/firebase';
+
+const AGES = Array.from({ length: 50 }, (_, i) => i + 14);
 
 export default function ProfileScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, userId, isAuthenticated, isLoading, logout, refreshUserData } = useAuth();
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editGender, setEditGender] = useState<UserGender | null>(user?.gender ?? null);
+  const [editAge, setEditAge] = useState<number>(user?.age ?? 20);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const openEditModal = () => {
+    setEditGender(user?.gender ?? null);
+    setEditAge(user?.age ?? 20);
+    setShowEditModal(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!userId) return;
+    if (!editGender) {
+      Alert.alert('Champ requis', 'Sélectionne un genre.');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await updateUserProfile(userId, { gender: editGender, age: editAge });
+      await refreshUserData();
+      setShowEditModal(false);
+      Alert.alert('Enregistré', 'Tes infos ont été mises à jour.');
+    } catch {
+      Alert.alert('Erreur', 'Impossible de mettre à jour tes infos.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
 
   const handleLogout = async () => {
-    Alert.alert('Deconnexion', 'Voulez-vous vraiment vous deconnecter ?', [
+    Alert.alert('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [
       { text: 'Annuler', style: 'cancel' },
       {
-        text: 'Deconnecter',
+        text: 'Se déconnecter',
         style: 'destructive',
         onPress: async () => {
           try {
             await logout();
           } catch {
-            Alert.alert('Erreur', 'Impossible de se deconnecter');
+            Alert.alert('Erreur', 'Impossible de te déconnecter.');
           }
         },
       },
     ]);
+  };
+
+  const handleResetProgression = () => {
+    Alert.alert(
+      'Réinitialiser la progression',
+      'Tous tes scans seront supprimés et tes stats remises à zéro. Tes scans restants et ton compte ne sont pas modifiés.\n\nContinuer ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Réinitialiser',
+          style: 'destructive',
+          onPress: async () => {
+            if (!userId) return;
+            setIsResetting(true);
+            try {
+              const result = await resetProgression(userId);
+              if (result.success) {
+                await refreshUserData();
+                Alert.alert('C\'est fait', 'Ta progression a été réinitialisée.');
+              } else {
+                Alert.alert('Erreur', result.error ?? 'Impossible de réinitialiser.');
+              }
+            } catch {
+              Alert.alert('Erreur', 'Impossible de réinitialiser la progression.');
+            } finally {
+              setIsResetting(false);
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (isLoading) {
@@ -49,10 +119,10 @@ export default function ProfileScreen() {
             <IconSymbol name="person.fill" size={48} color={colors.tint} />
           </View>
           <ThemedText type="subtitle" style={styles.title}>
-            Non connecte
+            Non connecté
           </ThemedText>
           <ThemedText style={styles.description}>
-            Connectez-vous pour acceder a votre profil et vos parametres
+            Connecte-toi pour accéder à ton profil et tes paramètres
           </ThemedText>
           <Button
             title="Se connecter"
@@ -66,11 +136,15 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.pageTitle}>
-        Profil
-      </ThemedText>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <ThemedText type="title" style={styles.pageTitle}>
+          Profil
+        </ThemedText>
 
-      <Card style={styles.profileCard}>
+        <Card style={styles.profileCard}>
         <View style={[styles.avatar, { backgroundColor: colors.tint + '20' }]}>
           <IconSymbol name="person.fill" size={32} color={colors.tint} />
         </View>
@@ -88,7 +162,7 @@ export default function ProfileScreen() {
         <View style={styles.statRow}>
           <ThemedText style={styles.statLabel}>Scans restants</ThemedText>
           <ThemedText type="defaultSemiBold">
-            {user?.isPremium ? 'Illimite' : `${user?.scansRemaining ?? 0}/3`}
+            {user?.isPremium ? 'Illimité' : `${user?.scansRemaining ?? 0}/3`}
           </ThemedText>
         </View>
         <View style={styles.statRow}>
@@ -99,9 +173,126 @@ export default function ProfileScreen() {
         </View>
       </Card>
 
-      <View style={styles.actions}>
-        <Button title="Se deconnecter" variant="outline" onPress={handleLogout} />
-      </View>
+      <Card style={styles.infoCard}>
+        <View style={styles.infoCardHeader}>
+          <ThemedText type="subtitle">Infos personnelles</ThemedText>
+          <Pressable onPress={openEditModal} style={styles.editButton}>
+            <IconSymbol name="pencil" size={18} color={colors.tint} />
+            <ThemedText style={[styles.editButtonText, { color: colors.tint }]}>Modifier</ThemedText>
+          </Pressable>
+        </View>
+        <View style={styles.statRow}>
+          <ThemedText style={styles.statLabel}>Genre</ThemedText>
+          <ThemedText type="defaultSemiBold">
+            {user?.gender === 'homme' ? 'Homme' : user?.gender === 'femme' ? 'Femme' : 'Non renseigné'}
+          </ThemedText>
+        </View>
+        <View style={styles.statRow}>
+          <ThemedText style={styles.statLabel}>Âge</ThemedText>
+          <ThemedText type="defaultSemiBold">
+            {user?.age != null ? `${user.age} ans` : 'Non renseigné'}
+          </ThemedText>
+        </View>
+      </Card>
+
+      <Card style={styles.resetCard}>
+        <ThemedText type="subtitle" style={styles.resetCardTitle}>Progression</ThemedText>
+        <ThemedText style={[styles.resetCardDescription, { color: colors.textSecondary }]}>
+          Supprime tous tes scans et remet tes stats à zéro. Tes scans restants ne changent pas.
+        </ThemedText>
+        <Button
+          title={isResetting ? 'Réinitialisation...' : 'Réinitialiser la progression'}
+          onPress={handleResetProgression}
+          disabled={isResetting}
+          style={[styles.resetButton, isResetting && styles.resetButtonDisabled]}
+        />
+      </Card>
+
+      <Modal
+        visible={showEditModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowEditModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <ThemedText type="title" style={styles.modalTitle}>Modifier mes infos</ThemedText>
+            <ThemedText style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+              Ces infos permettent d&apos;adapter ton score et les conseils.
+            </ThemedText>
+
+            <ThemedText style={[styles.fieldLabel, { color: colors.textSecondary }]}>Genre</ThemedText>
+            <View style={styles.genderRow}>
+              <Pressable
+                style={[
+                  styles.genderOption,
+                  { borderColor: editGender === 'homme' ? colors.tint : colors.border },
+                ]}
+                onPress={() => setEditGender('homme')}
+              >
+                <ThemedText>Homme</ThemedText>
+                <View style={[styles.radio, { borderColor: editGender === 'homme' ? colors.tint : colors.border }]}>
+                  {editGender === 'homme' && <View style={[styles.radioInner, { backgroundColor: colors.tint }]} />}
+                </View>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.genderOption,
+                  { borderColor: editGender === 'femme' ? colors.tint : colors.border },
+                ]}
+                onPress={() => setEditGender('femme')}
+              >
+                <ThemedText>Femme</ThemedText>
+                <View style={[styles.radio, { borderColor: editGender === 'femme' ? colors.tint : colors.border }]}>
+                  {editGender === 'femme' && <View style={[styles.radioInner, { backgroundColor: colors.tint }]} />}
+                </View>
+              </Pressable>
+            </View>
+
+            <ThemedText style={[styles.fieldLabel, { color: colors.textSecondary }]}>Âge</ThemedText>
+            <ScrollView
+              style={styles.ageScroll}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.ageScrollContent}
+            >
+              {AGES.map((age) => (
+                <Pressable
+                  key={age}
+                  style={[
+                    styles.ageItem,
+                    editAge === age && { backgroundColor: colors.tint + '25' },
+                  ]}
+                  onPress={() => setEditAge(age)}
+                >
+                  <ThemedText style={editAge === age ? styles.ageItemTextSelected : undefined}>
+                    {age} ans
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </ScrollView>
+
+            <View style={styles.modalActions}>
+              <Button
+                title="Annuler"
+                variant="outline"
+                onPress={() => setShowEditModal(false)}
+                style={styles.modalButton}
+              />
+              <Button
+                title={isSaving ? 'Enregistrement...' : 'Enregistrer'}
+                onPress={handleSaveProfile}
+                disabled={isSaving}
+                style={styles.modalButton}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+        <View style={styles.actions}>
+          <Button title="Se déconnecter" variant="outline" onPress={handleLogout} />
+        </View>
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -109,8 +300,11 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 80,
-    paddingHorizontal: 24,
+  },
+  scrollContent: {
+    paddingTop: Layout.screenPaddingTop,
+    paddingHorizontal: Layout.screenPaddingHorizontal,
+    paddingBottom: 40,
   },
   centered: {
     flex: 1,
@@ -168,7 +362,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   statsCard: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   statRow: {
     flexDirection: 'row',
@@ -179,8 +373,117 @@ const styles = StyleSheet.create({
   statLabel: {
     opacity: 0.7,
   },
+  infoCard: {
+    marginBottom: 24,
+  },
+  infoCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  editButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  resetCard: {
+    marginBottom: 24,
+    padding: Layout.cardPadding,
+  },
+  resetCardTitle: {
+    marginBottom: 8,
+  },
+  resetCardDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  resetButton: {
+    alignSelf: 'stretch',
+  },
+  resetButtonDisabled: {
+    opacity: 0.6,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 40,
+    maxHeight: '85%',
+  },
+  modalTitle: {
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    marginBottom: 20,
+  },
+  fieldLabel: {
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  genderRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 20,
+  },
+  genderOption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  ageScroll: {
+    maxHeight: 160,
+    marginBottom: 24,
+  },
+  ageScrollContent: {
+    gap: 4,
+  },
+  ageItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+  },
+  ageItemTextSelected: {
+    fontWeight: '600',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+  },
   actions: {
-    marginTop: 'auto',
-    paddingBottom: 32,
+    marginTop: 24,
+    gap: 12,
   },
 });
