@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "331144703686",
+    "project_id": "glowscore-f3ed7",
+    "storage_bucket": "glowscore-f3ed7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331144703686:android:ab5094a4da6603bb6471c7",
+        "android_client_info": {
+          "package_name": "com.glowscore.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331144703686-3meq87troeuertaf6of4furj27g1iboi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.glowscore.app",
+            "certificate_hash": "83f9179e5729459fc2e22c608d65bb5c09b31d31"
+          }
+        },
+        {
+          "client_id": "331144703686-0q2j7ruaffod55vcd2rpp75j66kq0s3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0FDoh0O3fP9aw7Rl5BWSyz0_LT5WrM90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331144703686-0q2j7ruaffod55vcd2rpp75j66kq0s3j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "331144703686-nct68g2e17q5srfppqqfha1ue3355fpa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.glowscore.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
