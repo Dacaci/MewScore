@@ -25,13 +25,13 @@ if (Platform.OS === 'web') {
   auth = getAuth(app);
 } else {
   // For native platforms, use AsyncStorage persistence
-  // Check if auth is already initialized to avoid errors on hot reload
+  // Try initializeAuth first, fallback to getAuth on hot reload (already initialized)
   try {
-    auth = getAuth(app);
-  } catch {
     auth = initializeAuth(app, {
       persistence: getReactNativePersistence(AsyncStorage),
     });
+  } catch {
+    auth = getAuth(app);
   }
 }
 

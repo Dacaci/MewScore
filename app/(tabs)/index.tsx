@@ -28,19 +28,18 @@ export default function HomeScreen() {
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Scan line animation
+    // Scan line animation - goes down only, then resets to top
     Animated.loop(
       Animated.sequence([
         Animated.timing(scanLineAnim, {
           toValue: 1,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
+          duration: 1500,
+          easing: Easing.linear,
           useNativeDriver: true,
         }),
         Animated.timing(scanLineAnim, {
           toValue: 0,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
+          duration: 0,
           useNativeDriver: true,
         }),
       ])
@@ -50,7 +49,7 @@ export default function HomeScreen() {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
-          toValue: 1.05,
+          toValue: 1.03,
           duration: 1500,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
@@ -116,7 +115,7 @@ export default function HomeScreen() {
 
   const scanLineTranslate = scanLineAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [-60, 60],
+    outputRange: [-70, 70],
   });
 
   return (
@@ -131,7 +130,7 @@ export default function HomeScreen() {
             MewScore
           </ThemedText>
           <ThemedText style={[styles.tagline, { color: colors.textSecondary }]}>
-            Analyse ton visage avec l'IA
+            Analyse et améliore ton apparence
           </ThemedText>
         </View>
 
@@ -211,10 +210,13 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        {/* No scans CTA */}
+        {/* No scans CTA - More prominent */}
         {isAuthenticated && !canScan && (
-          <Pressable onPress={() => router.push('/paywall')} style={styles.premiumCta}>
-            <ThemedText style={[styles.premiumCtaText, { color: colors.tint }]}>
+          <Pressable
+            onPress={() => router.push('/paywall')}
+            style={[styles.premiumCtaButton, { backgroundColor: colors.tint }]}
+          >
+            <ThemedText style={styles.premiumCtaButtonText}>
               Débloquer plus de scans
             </ThemedText>
           </Pressable>
@@ -248,7 +250,7 @@ export default function HomeScreen() {
               <IconSymbol name="sparkles" size={20} color={colors.tint} />
             </View>
             <View style={styles.featureText}>
-              <ThemedText style={styles.featureTitle}>Analyse IA</ThemedText>
+              <ThemedText style={styles.featureTitle}>Analyse faciale</ThemedText>
               <ThemedText style={[styles.featureDesc, { color: colors.textSecondary }]}>
                 Score basé sur les proportions faciales
               </ThemedText>
@@ -366,13 +368,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
-  premiumCta: {
+  premiumCtaButton: {
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 14,
+    marginBottom: 8,
   },
-  premiumCtaText: {
-    fontSize: 15,
+  premiumCtaButtonText: {
+    fontSize: 17,
     fontWeight: '600',
+    color: '#FFFFFF',
   },
   authContainer: {
     alignItems: 'center',

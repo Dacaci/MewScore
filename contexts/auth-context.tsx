@@ -2,12 +2,12 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { User, AuthState } from '@/types/firebase';
-import { getUserData, loginUser, logoutUser, registerUser, signInWithGoogle } from '@/services/auth-service';
+import { getUserData, loginUser, logoutUser, registerUser, signInWithGoogle, OnboardingData } from '@/services/auth-service';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: (idToken: string) => Promise<void>;
+  register: (email: string, password: string, onboardingData?: OnboardingData) => Promise<void>;
+  loginWithGoogle: (idToken: string, onboardingData?: OnboardingData) => Promise<void>;
   logout: () => Promise<void>;
   refreshUserData: () => Promise<void>;
 }
@@ -60,10 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string, onboardingData?: OnboardingData) => {
     setState((prev) => ({ ...prev, isLoading: true }));
     try {
-      const firebaseUser = await registerUser(email, password);
+      const firebaseUser = await registerUser(email, password, onboardingData);
       await fetchUserData(firebaseUser);
     } catch (error) {
       setState((prev) => ({ ...prev, isLoading: false }));
@@ -71,10 +71,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loginWithGoogle = async (idToken: string) => {
+  const loginWithGoogle = async (idToken: string, onboardingData?: OnboardingData) => {
     setState((prev) => ({ ...prev, isLoading: true }));
     try {
-      const firebaseUser = await signInWithGoogle(idToken);
+      const firebaseUser = await signInWithGoogle(idToken, onboardingData);
       await fetchUserData(firebaseUser);
     } catch (error) {
       setState((prev) => ({ ...prev, isLoading: false }));

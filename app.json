@@ -1,13 +1,13 @@
 {
   "expo": {
     "name": "MewScore",
-    "slug": "MewScore",
+    "slug": "GlowScore",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mewscore",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mewscore.app",
@@ -18,7 +18,8 @@
       }
     },
     "android": {
-      "package": "com.mewscore.app",
+      "package": "com.glowscore.app",
+      "versionCode": 3,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
@@ -42,7 +43,9 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
-          "dark": { "backgroundColor": "#000000" }
+          "dark": {
+            "backgroundColor": "#000000"
+          }
         }
       ],
       "@react-native-google-signin/google-signin"

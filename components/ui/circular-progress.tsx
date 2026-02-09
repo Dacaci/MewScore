@@ -1,17 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, Platform } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
-import Animated, {
-  useSharedValue,
-  useAnimatedProps,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
-
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface CircularProgressProps {
   progress: number; // 0-100
@@ -41,70 +32,32 @@ export function CircularProgress({
   label,
   showValue = true,
   locked = false,
-  animated = true,
 }: CircularProgressProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
   const clampedProgress = Math.max(0, Math.min(100, progress));
   const progressColor = locked ? 'rgba(150, 150, 150, 0.3)' : (color ?? getProgressColor(clampedProgress));
-  const trackColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+  const trackColor = colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)';
 
-  // SVG circle calculations
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const center = size / 2;
-
-  // Animation
-  const animatedProgress = useSharedValue(0);
-
-  useEffect(() => {
-    if (animated && !locked) {
-      animatedProgress.value = withTiming(clampedProgress, {
-        duration: 800,
-        easing: Easing.out(Easing.cubic),
-      });
-    } else {
-      animatedProgress.value = locked ? 0 : clampedProgress;
-    }
-  }, [clampedProgress, locked, animated]);
-
-  const animatedProps = useAnimatedProps(() => {
-    const strokeDashoffset = circumference - (circumference * animatedProgress.value) / 100;
-    return {
-      strokeDashoffset,
-    };
-  });
+  // Simple circle with background fill to show progress
+  const innerSize = size - strokeWidth * 2;
 
   return (
     <View style={styles.container}>
-      <View style={[styles.progressContainer, { width: size, height: size }]}>
-        <Svg width={size} height={size} style={styles.svg}>
-          {/* Background track */}
-          <Circle
-            cx={center}
-            cy={center}
-            r={radius}
-            stroke={trackColor}
-            strokeWidth={strokeWidth}
-            fill="none"
-          />
-          {/* Animated progress arc */}
-          <AnimatedCircle
-            cx={center}
-            cy={center}
-            r={radius}
-            stroke={progressColor}
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            animatedProps={animatedProps}
-            rotation="-90"
-            origin={`${center}, ${center}`}
-          />
-        </Svg>
-
+      <View
+        style={[
+          styles.progressContainer,
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: trackColor,
+            borderWidth: strokeWidth,
+            borderColor: locked ? 'rgba(150,150,150,0.2)' : progressColor,
+          }
+        ]}
+      >
         {/* Center content */}
         <View style={styles.centerContent}>
           {locked ? (
@@ -135,19 +88,15 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   progressContainer: {
-    position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  svg: {
-    position: 'absolute',
   },
   centerContent: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   valueText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
   },

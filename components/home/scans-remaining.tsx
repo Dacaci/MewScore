@@ -5,23 +5,34 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 interface ScansRemainingProps {
   scansRemaining: number;
   isPremium: boolean;
+  detailedReportsRemaining?: number;
   maxScans?: number;
 }
 
 export function ScansRemaining({
   scansRemaining,
   isPremium,
+  detailedReportsRemaining = 0,
   maxScans = 3,
 }: ScansRemainingProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  const scansDisplay = isPremium
+    ? 'Illimité'
+    : scansRemaining > maxScans
+      ? `${scansRemaining}`
+      : `${scansRemaining}/${maxScans}`;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.label, { color: colors.icon }]}>Scans restants</Text>
       <Text style={[styles.value, { color: colors.text }]}>
-        {isPremium ? 'Illimite' : `${scansRemaining}/${maxScans}`}
+        {scansDisplay}
       </Text>
+      {!isPremium && detailedReportsRemaining > 0 && (
+        <Text style={styles.reportBadge}>+1 rapport détaillé</Text>
+      )}
     </View>
   );
 }
@@ -46,5 +57,11 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 20,
     fontWeight: '700',
+  },
+  reportBadge: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#8b5cf6',
+    marginTop: 4,
   },
 });

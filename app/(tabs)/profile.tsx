@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { ThemedText } from '@/components/themed-text';
@@ -8,11 +8,11 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/contexts/auth-context';
+import { useTheme } from '@/contexts/theme-context';
 import { Colors } from '@/constants/theme';
 import { Layout } from '@/constants/layout';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { updateUserProfile } from '@/services/auth-service';
-import { resetProgression } from '@/services/scan-service';
 import { UserGender } from '@/types/firebase';
 
 const AGES = Array.from({ length: 50 }, (_, i) => i + 14);
@@ -22,12 +22,12 @@ export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user, userId, isAuthenticated, isLoading, logout, refreshUserData } = useAuth();
+  const { themeMode, setThemeMode, isDark } = useTheme();
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editGender, setEditGender] = useState<UserGender | null>(user?.gender ?? null);
   const [editAge, setEditAge] = useState<number>(user?.age ?? 20);
   const [isSaving, setIsSaving] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
 
   const openEditModal = () => {
     setEditGender(user?.gender ?? null);
@@ -54,7 +54,6 @@ export default function ProfileScreen() {
     }
   };
 
-
   const handleLogout = async () => {
     Alert.alert('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [
       { text: 'Annuler', style: 'cancel' },
@@ -72,41 +71,16 @@ export default function ProfileScreen() {
     ]);
   };
 
-  const handleResetProgression = () => {
-    Alert.alert(
-      'Réinitialiser la progression',
-      'Tous tes scans seront supprimés et tes stats remises à zéro. Tes scans restants et ton compte ne sont pas modifiés.\n\nContinuer ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Réinitialiser',
-          style: 'destructive',
-          onPress: async () => {
-            if (!userId) return;
-            setIsResetting(true);
-            try {
-              const result = await resetProgression(userId);
-              if (result.success) {
-                await refreshUserData();
-                Alert.alert('C\'est fait', 'Ta progression a été réinitialisée.');
-              } else {
-                Alert.alert('Erreur', result.error ?? 'Impossible de réinitialiser.');
-              }
-            } catch {
-              Alert.alert('Erreur', 'Impossible de réinitialiser la progression.');
-            } finally {
-              setIsResetting(false);
-            }
-          },
-        },
-      ]
-    );
+  const toggleDarkMode = () => {
+    setThemeMode(isDark ? 'light' : 'dark');
   };
 
   if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText>Chargement...</ThemedText>
+        <View style={styles.loadingCenter}>
+          <ThemedText>Chargement...</ThemedText>
+        </View>
       </ThemedView>
     );
   }
@@ -115,14 +89,14 @@ export default function ProfileScreen() {
     return (
       <ThemedView style={styles.container}>
         <View style={styles.centered}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.tint + '20' }]}>
+          <View style={[styles.iconContainer, { backgroundColor: colors.tint + '15' }]}>
             <IconSymbol name="person.fill" size={48} color={colors.tint} />
           </View>
           <ThemedText type="subtitle" style={styles.title}>
             Non connecté
           </ThemedText>
-          <ThemedText style={styles.description}>
-            Connecte-toi pour accéder à ton profil et tes paramètres
+          <ThemedText style={[styles.description, { color: colors.textSecondary }]}>
+            Connecte-toi pour accéder à ton profil
           </ThemedText>
           <Button
             title="Se connecter"
@@ -140,158 +114,177 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <ThemedText type="title" style={styles.pageTitle}>
-          Profil
-        </ThemedText>
-
-        <Card style={styles.profileCard}>
-        <View style={[styles.avatar, { backgroundColor: colors.tint + '20' }]}>
-          <IconSymbol name="person.fill" size={32} color={colors.tint} />
-        </View>
-        <ThemedText type="subtitle" style={styles.email}>
-          {user?.email}
-        </ThemedText>
-        <View style={[styles.badge, { backgroundColor: user?.isPremium ? colors.tint : colors.icon + '30' }]}>
-          <ThemedText style={[styles.badgeText, { color: user?.isPremium ? '#fff' : colors.text }]}>
-            {user?.isPremium ? 'Premium' : 'Gratuit'}
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={[styles.avatarLarge, { backgroundColor: colors.tint + '15' }]}>
+            <IconSymbol name="person.fill" size={40} color={colors.tint} />
+          </View>
+          <ThemedText type="title" style={styles.userName}>
+            {(user?.email ?? '').split('@')[0]}
           </ThemedText>
-        </View>
-      </Card>
-
-      <Card style={styles.statsCard}>
-        <View style={styles.statRow}>
-          <ThemedText style={styles.statLabel}>Scans restants</ThemedText>
-          <ThemedText type="defaultSemiBold">
-            {user?.isPremium ? 'Illimité' : `${user?.scansRemaining ?? 0}/3`}
+          <ThemedText style={[styles.userEmail, { color: colors.textSecondary }]}>
+            {user?.email}
           </ThemedText>
-        </View>
-        <View style={styles.statRow}>
-          <ThemedText style={styles.statLabel}>Statut</ThemedText>
-          <ThemedText type="defaultSemiBold">
-            {user?.isPremium ? 'Premium' : 'Gratuit'}
-          </ThemedText>
-        </View>
-      </Card>
-
-      <Card style={styles.infoCard}>
-        <View style={styles.infoCardHeader}>
-          <ThemedText type="subtitle">Infos personnelles</ThemedText>
-          <Pressable onPress={openEditModal} style={styles.editButton}>
-            <IconSymbol name="pencil" size={18} color={colors.tint} />
-            <ThemedText style={[styles.editButtonText, { color: colors.tint }]}>Modifier</ThemedText>
-          </Pressable>
-        </View>
-        <View style={styles.statRow}>
-          <ThemedText style={styles.statLabel}>Genre</ThemedText>
-          <ThemedText type="defaultSemiBold">
-            {user?.gender === 'homme' ? 'Homme' : user?.gender === 'femme' ? 'Femme' : 'Non renseigné'}
-          </ThemedText>
-        </View>
-        <View style={styles.statRow}>
-          <ThemedText style={styles.statLabel}>Âge</ThemedText>
-          <ThemedText type="defaultSemiBold">
-            {user?.age != null ? `${user.age} ans` : 'Non renseigné'}
-          </ThemedText>
-        </View>
-      </Card>
-
-      <Card style={styles.resetCard}>
-        <ThemedText type="subtitle" style={styles.resetCardTitle}>Progression</ThemedText>
-        <ThemedText style={[styles.resetCardDescription, { color: colors.textSecondary }]}>
-          Supprime tous tes scans et remet tes stats à zéro. Tes scans restants ne changent pas.
-        </ThemedText>
-        <Button
-          title={isResetting ? 'Réinitialisation...' : 'Réinitialiser la progression'}
-          onPress={handleResetProgression}
-          disabled={isResetting}
-          style={[styles.resetButton, isResetting && styles.resetButtonDisabled]}
-        />
-      </Card>
-
-      <Modal
-        visible={showEditModal}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setShowEditModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-            <ThemedText type="title" style={styles.modalTitle}>Modifier mes infos</ThemedText>
-            <ThemedText style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-              Ces infos permettent d&apos;adapter ton score et les conseils.
+          <View style={[styles.statusBadge, { backgroundColor: user?.isPremium ? colors.tint : colors.backgroundSecondary }]}>
+            <ThemedText style={[styles.statusText, { color: user?.isPremium ? '#fff' : colors.textSecondary }]}>
+              {user?.isPremium ? 'Premium' : 'Gratuit'}
             </ThemedText>
-
-            <ThemedText style={[styles.fieldLabel, { color: colors.textSecondary }]}>Genre</ThemedText>
-            <View style={styles.genderRow}>
-              <Pressable
-                style={[
-                  styles.genderOption,
-                  { borderColor: editGender === 'homme' ? colors.tint : colors.border },
-                ]}
-                onPress={() => setEditGender('homme')}
-              >
-                <ThemedText>Homme</ThemedText>
-                <View style={[styles.radio, { borderColor: editGender === 'homme' ? colors.tint : colors.border }]}>
-                  {editGender === 'homme' && <View style={[styles.radioInner, { backgroundColor: colors.tint }]} />}
-                </View>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.genderOption,
-                  { borderColor: editGender === 'femme' ? colors.tint : colors.border },
-                ]}
-                onPress={() => setEditGender('femme')}
-              >
-                <ThemedText>Femme</ThemedText>
-                <View style={[styles.radio, { borderColor: editGender === 'femme' ? colors.tint : colors.border }]}>
-                  {editGender === 'femme' && <View style={[styles.radioInner, { backgroundColor: colors.tint }]} />}
-                </View>
-              </Pressable>
-            </View>
-
-            <ThemedText style={[styles.fieldLabel, { color: colors.textSecondary }]}>Âge</ThemedText>
-            <ScrollView
-              style={styles.ageScroll}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.ageScrollContent}
-            >
-              {AGES.map((age) => (
-                <Pressable
-                  key={age}
-                  style={[
-                    styles.ageItem,
-                    editAge === age && { backgroundColor: colors.tint + '25' },
-                  ]}
-                  onPress={() => setEditAge(age)}
-                >
-                  <ThemedText style={editAge === age ? styles.ageItemTextSelected : undefined}>
-                    {age} ans
-                  </ThemedText>
-                </Pressable>
-              ))}
-            </ScrollView>
-
-            <View style={styles.modalActions}>
-              <Button
-                title="Annuler"
-                variant="outline"
-                onPress={() => setShowEditModal(false)}
-                style={styles.modalButton}
-              />
-              <Button
-                title={isSaving ? 'Enregistrement...' : 'Enregistrer'}
-                onPress={handleSaveProfile}
-                disabled={isSaving}
-                style={styles.modalButton}
-              />
-            </View>
           </View>
         </View>
-      </Modal>
 
-        <View style={styles.actions}>
-          <Button title="Se déconnecter" variant="outline" onPress={handleLogout} />
+        {/* Scans Card */}
+        <Card style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={[styles.cardIcon, { backgroundColor: colors.tint + '15' }]}>
+              <IconSymbol name="camera.fill" size={20} color={colors.tint} />
+            </View>
+            <ThemedText type="defaultSemiBold">Scans</ThemedText>
+          </View>
+          <View style={styles.cardRow}>
+            <ThemedText style={[styles.cardLabel, { color: colors.textSecondary }]}>Restants</ThemedText>
+            <ThemedText type="defaultSemiBold">
+              {user?.isPremium ? 'Illimité' : `${user?.scansRemaining ?? 0}`}
+            </ThemedText>
+          </View>
+        </Card>
+
+        {/* Personal Info Card */}
+        <Card style={styles.card}>
+          <View style={styles.cardHeaderWithAction}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.cardIcon, { backgroundColor: colors.success + '15' }]}>
+                <IconSymbol name="person.text.rectangle" size={20} color={colors.success} />
+              </View>
+              <ThemedText type="defaultSemiBold">Infos personnelles</ThemedText>
+            </View>
+            <Pressable onPress={openEditModal} hitSlop={8}>
+              <ThemedText style={[styles.editLink, { color: colors.tint }]}>Modifier</ThemedText>
+            </Pressable>
+          </View>
+          <View style={styles.cardRow}>
+            <ThemedText style={[styles.cardLabel, { color: colors.textSecondary }]}>Genre</ThemedText>
+            <ThemedText type="defaultSemiBold">
+              {user?.gender === 'homme' ? 'Homme' : user?.gender === 'femme' ? 'Femme' : '—'}
+            </ThemedText>
+          </View>
+          <View style={styles.cardRow}>
+            <ThemedText style={[styles.cardLabel, { color: colors.textSecondary }]}>Âge</ThemedText>
+            <ThemedText type="defaultSemiBold">
+              {user?.age != null ? `${user.age} ans` : '—'}
+            </ThemedText>
+          </View>
+        </Card>
+
+        {/* Settings Card */}
+        <Card style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={[styles.cardIcon, { backgroundColor: colors.warning + '15' }]}>
+              <IconSymbol name="gearshape.fill" size={20} color={colors.warning} />
+            </View>
+            <ThemedText type="defaultSemiBold">Paramètres</ThemedText>
+          </View>
+          <View style={styles.cardRow}>
+            <ThemedText style={[styles.cardLabel, { color: colors.textSecondary }]}>Mode sombre</ThemedText>
+            <Switch
+              value={isDark}
+              onValueChange={toggleDarkMode}
+              trackColor={{ false: colors.border, true: colors.tint }}
+              thumbColor="#fff"
+            />
+          </View>
+        </Card>
+
+        {/* Logout */}
+        <View style={styles.logoutSection}>
+          <Button
+            title="Se déconnecter"
+            variant="outline"
+            onPress={handleLogout}
+          />
         </View>
+
+        {/* Edit Modal */}
+        <Modal
+          visible={showEditModal}
+          animationType="slide"
+          transparent
+          onRequestClose={() => setShowEditModal(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setShowEditModal(false)}>
+            <Pressable style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+              <View style={styles.modalHandle} />
+              <ThemedText type="subtitle" style={styles.modalTitle}>Modifier mes infos</ThemedText>
+
+              <ThemedText style={[styles.fieldLabel, { color: colors.textSecondary }]}>Genre</ThemedText>
+              <View style={styles.genderRow}>
+                <Pressable
+                  style={[
+                    styles.genderOption,
+                    {
+                      backgroundColor: editGender === 'homme' ? colors.tint + '15' : colors.backgroundSecondary,
+                      borderColor: editGender === 'homme' ? colors.tint : colors.border,
+                    },
+                  ]}
+                  onPress={() => setEditGender('homme')}
+                >
+                  <ThemedText style={editGender === 'homme' ? { fontWeight: '600' } : undefined}>Homme</ThemedText>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.genderOption,
+                    {
+                      backgroundColor: editGender === 'femme' ? colors.tint + '15' : colors.backgroundSecondary,
+                      borderColor: editGender === 'femme' ? colors.tint : colors.border,
+                    },
+                  ]}
+                  onPress={() => setEditGender('femme')}
+                >
+                  <ThemedText style={editGender === 'femme' ? { fontWeight: '600' } : undefined}>Femme</ThemedText>
+                </Pressable>
+              </View>
+
+              <ThemedText style={[styles.fieldLabel, { color: colors.textSecondary }]}>Âge</ThemedText>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.ageScrollContent}
+              >
+                {AGES.map((age) => (
+                  <Pressable
+                    key={age}
+                    style={[
+                      styles.ageChip,
+                      {
+                        backgroundColor: editAge === age ? colors.tint : colors.backgroundSecondary,
+                        borderColor: editAge === age ? colors.tint : colors.border,
+                      },
+                    ]}
+                    onPress={() => setEditAge(age)}
+                  >
+                    <ThemedText style={[styles.ageChipText, editAge === age && styles.ageChipTextSelected]}>
+                      {age}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </ScrollView>
+
+              <View style={styles.modalActions}>
+                <Button
+                  title="Annuler"
+                  variant="secondary"
+                  onPress={() => setShowEditModal(false)}
+                  style={styles.modalButton}
+                />
+                <Button
+                  title={isSaving ? 'Enregistrement...' : 'Enregistrer'}
+                  onPress={handleSaveProfile}
+                  disabled={isSaving}
+                  style={styles.modalButton}
+                />
+              </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
       </ScrollView>
     </ThemedView>
   );
@@ -300,6 +293,11 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollContent: {
     paddingTop: Layout.screenPaddingTop,
@@ -321,158 +319,152 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    marginBottom: 12,
+    marginBottom: 8,
     textAlign: 'center',
   },
   description: {
     textAlign: 'center',
-    opacity: 0.7,
-    lineHeight: 22,
     marginBottom: 24,
   },
   loginButton: {
     minWidth: 200,
   },
-  pageTitle: {
-    marginBottom: 24,
-  },
-  profileCard: {
+  header: {
     alignItems: 'center',
-    paddingVertical: 24,
-    marginBottom: 16,
+    marginBottom: 32,
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  avatarLarge: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
-  email: {
+  userName: {
+    marginBottom: 4,
+  },
+  userEmail: {
+    fontSize: 14,
     marginBottom: 12,
   },
-  badge: {
-    paddingHorizontal: 16,
+  statusBadge: {
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 20,
   },
-  badgeText: {
-    fontSize: 14,
+  statusText: {
+    fontSize: 13,
     fontWeight: '600',
   },
-  statsCard: {
+  card: {
     marginBottom: 16,
   },
-  statRow: {
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  cardHeaderWithAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  cardIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
-  statLabel: {
-    opacity: 0.7,
+  cardLabel: {
+    fontSize: 15,
   },
-  infoCard: {
-    marginBottom: 24,
-  },
-  infoCardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  editButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  editButtonText: {
+  editLink: {
     fontSize: 15,
     fontWeight: '600',
   },
-  resetCard: {
-    marginBottom: 24,
-    padding: Layout.cardPadding,
+  dangerButton: {
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    marginTop: 8,
   },
-  resetCardTitle: {
-    marginBottom: 8,
+  dangerButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
   },
-  resetCardDescription: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  resetButton: {
-    alignSelf: 'stretch',
-  },
-  resetButtonDisabled: {
-    opacity: 0.6,
+  logoutSection: {
+    marginTop: 8,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
   modalContent: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingTop: 12,
     paddingBottom: 40,
-    maxHeight: '85%',
   },
-  modalTitle: {
-    marginBottom: 8,
-  },
-  modalSubtitle: {
-    fontSize: 14,
+  modalHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: 'rgba(128,128,128,0.3)',
+    borderRadius: 2,
+    alignSelf: 'center',
     marginBottom: 20,
   },
+  modalTitle: {
+    marginBottom: 24,
+    textAlign: 'center',
+  },
   fieldLabel: {
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   genderRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   genderOption: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
+    paddingVertical: 16,
     borderRadius: 12,
-    borderWidth: 2,
-  },
-  radio: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  radioInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  ageScroll: {
-    maxHeight: 160,
-    marginBottom: 24,
+    borderWidth: 1.5,
   },
   ageScrollContent: {
-    gap: 4,
+    gap: 8,
+    paddingVertical: 4,
+    marginBottom: 24,
   },
-  ageItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+  ageChip: {
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
   },
-  ageItemTextSelected: {
+  ageChipText: {
+    fontSize: 15,
+  },
+  ageChipTextSelected: {
+    color: '#fff',
     fontWeight: '600',
   },
   modalActions: {
@@ -481,9 +473,5 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-  },
-  actions: {
-    marginTop: 24,
-    gap: 12,
   },
 });
