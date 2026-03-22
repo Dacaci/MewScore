@@ -340,5 +340,19 @@
   "scoreGrid": {
     "title": "Detailed scores",
     "unlockScores": "Unlock scores"
+  },
+  "programmes": {
+    "title": "Programs",
+    "subtitle": "Pick a program and check off your tasks every day.",
+    "duration": "4 weeks",
+    "tasksCompleted": "tasks completed",
+    "startProgram": "Start this program",
+    "unlockAll": "Unlock all programs",
+    "unlockAllDesc": "Access all 10 programs with Transformation Mode",
+    "resetTitle": "Reset program?",
+    "resetDesc": "Your progress will be lost and the program will restart from scratch.",
+    "reset": "Reset",
+    "cancel": "Cancel",
+    "programCompleted": "Program completed — scan again to see your progress!"
   }
 }

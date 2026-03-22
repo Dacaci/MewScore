@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -31,17 +30,24 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="progression"
+        name="programmes"
         options={{
-          title: 'Progression',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.line.uptrend.xyaxis" color={color} />,
+          title: 'Programmes',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet.rectangle.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
-          title: 'Dernier scan',
+          title: 'Historique',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet.clipboard.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="progression"
+        options={{
+          title: 'Progression',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.line.uptrend.xyaxis" color={color} />,
         }}
       />
       <Tabs.Screen

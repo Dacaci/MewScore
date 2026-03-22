@@ -340,5 +340,19 @@
   "scoreGrid": {
     "title": "Scores détaillés",
     "unlockScores": "Débloquer les scores"
+  },
+  "programmes": {
+    "title": "Programmes",
+    "subtitle": "Sélectionne un programme et coche tes tâches chaque jour.",
+    "duration": "4 semaines",
+    "tasksCompleted": "tâches complétées",
+    "startProgram": "Commencer ce programme",
+    "unlockAll": "Débloquer tous les programmes",
+    "unlockAllDesc": "Accède aux 10 programmes avec le mode Transformation",
+    "resetTitle": "Réinitialiser le programme ?",
+    "resetDesc": "Ta progression sera perdue et le programme repartira de zéro.",
+    "reset": "Réinitialiser",
+    "cancel": "Annuler",
+    "programCompleted": "Programme terminé — scannes à nouveau pour voir ton évolution !"
   }
 }
