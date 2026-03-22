@@ -467,7 +467,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'machoire',
     icon: '🦷',
     color: '#3B82F6',
-    image: require('@/assets/images/programmes/machoire.jpg'),
+    image: require('@/assets/images/programmes/2machoire.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -513,7 +513,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'hyoide',
     icon: '🔵',
     color: '#8B5CF6',
-    image: require('@/assets/images/programmes/hyoide.jpg'),
+    image: require('@/assets/images/programmes/2hyoide.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -557,7 +557,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'posture',
     icon: '🧍',
     color: '#10B981',
-    image: require('@/assets/images/programmes/posture.jpg'),
+    image: require('@/assets/images/programmes/2posture.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -601,7 +601,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'yeux',
     icon: '👁️',
     color: '#F59E0B',
-    image: require('@/assets/images/programmes/yeux.jpg'),
+    image: require('@/assets/images/programmes/2yeux.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -648,7 +648,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'cheveux',
     icon: '💇',
     color: '#EC4899',
-    image: require('@/assets/images/programmes/cheveux.jpg'),
+    image: require('@/assets/images/programmes/2cheveux.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -693,7 +693,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'peau',
     icon: '✨',
     color: '#F97316',
-    image: require('@/assets/images/programmes/peau.jpg'),
+    image: require('@/assets/images/programmes/2peau.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -739,7 +739,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'sommeil',
     icon: '🌙',
     color: '#6366F1',
-    image: require('@/assets/images/programmes/sommeil.jpg'),
+    image: require('@/assets/images/programmes/2sommeil.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -783,7 +783,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'symetrie',
     icon: '⚖️',
     color: '#D946EF',
-    image: require('@/assets/images/programmes/symetrie.jpg'),
+    image: require('@/assets/images/programmes/2symetrie.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -827,7 +827,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'sourcils',
     icon: '〰️',
     color: '#92400E',
-    image: require('@/assets/images/programmes/peau.jpg'),
+    image: require('@/assets/images/programmes/2sourcils.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -871,7 +871,7 @@ export const PROGRAMMES_FEMALE: Programme[] = [
     id: 'levres',
     icon: '💋',
     color: '#E11D48',
-    image: require('@/assets/images/programmes/symetrie.jpg'),
+    image: require('@/assets/images/programmes/2levres.jpg'),
     weeks: [
       {
         weekNumber: 1,
