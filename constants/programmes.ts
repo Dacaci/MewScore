@@ -13,6 +13,7 @@ export interface Programme {
   id: string;
   icon: string;
   color: string;
+  image: number;
   weeks: ProgrammeWeek[];
 }
 
@@ -21,6 +22,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'machoire',
     icon: '🦷',
     color: '#3B82F6',
+    image: require('@/assets/images/programmes/machoire.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -66,6 +68,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'hyoide',
     icon: '🔵',
     color: '#8B5CF6',
+    image: require('@/assets/images/programmes/hyoide.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -109,6 +112,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'posture',
     icon: '🧍',
     color: '#10B981',
+    image: require('@/assets/images/programmes/posture.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -152,6 +156,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'yeux',
     icon: '👁️',
     color: '#F59E0B',
+    image: require('@/assets/images/programmes/yeux.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -195,6 +200,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'cheveux',
     icon: '💇',
     color: '#EC4899',
+    image: require('@/assets/images/programmes/cheveux.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -238,6 +244,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'calvitie',
     icon: '💡',
     color: '#EF4444',
+    image: require('@/assets/images/programmes/calvitie.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -281,6 +288,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'peau',
     icon: '✨',
     color: '#F97316',
+    image: require('@/assets/images/programmes/peau.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -324,6 +332,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'sommeil',
     icon: '🌙',
     color: '#6366F1',
+    image: require('@/assets/images/programmes/sommeil.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -367,6 +376,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'cou',
     icon: '📐',
     color: '#14B8A6',
+    image: require('@/assets/images/programmes/cou.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -410,6 +420,7 @@ export const PROGRAMMES: Programme[] = [
     id: 'symetrie',
     icon: '⚖️',
     color: '#D946EF',
+    image: require('@/assets/images/programmes/symetrie.jpg'),
     weeks: [
       {
         weekNumber: 1,
@@ -445,6 +456,457 @@ export const PROGRAMMES: Programme[] = [
           { id: 'symetrie_w4_t1', label: 'Maintenir toutes les habitudes posturales' },
           { id: 'symetrie_w4_t2', label: 'Exercices faciaux 10 min/jour' },
           { id: 'symetrie_w4_t3', label: 'Se photographier de face pour suivre l\'évolution' },
+        ],
+      },
+    ],
+  },
+];
+
+export const PROGRAMMES_FEMALE: Programme[] = [
+  {
+    id: 'machoire',
+    icon: '🦷',
+    color: '#3B82F6',
+    image: require('@/assets/images/programmes/machoire.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Les bases',
+        tasks: [
+          { id: 'f_machoire_w1_t1', label: 'Pratiquer le mewing 20 min/jour (langue contre le palais)' },
+          { id: 'f_machoire_w1_t2', label: 'Contour en poudre le long de la mâchoire pour la définir visuellement' },
+          { id: 'f_machoire_w1_t3', label: 'Mastic gum 10 min/jour' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Renforcement + Contouring',
+        tasks: [
+          { id: 'f_machoire_w2_t1', label: 'Mewing 30 min/jour' },
+          { id: 'f_machoire_w2_t2', label: 'Jawline workout : serrer les dents 10x3 séries' },
+          { id: 'f_machoire_w2_t3', label: 'Contouring : poudre foncée sous la mâchoire, estomper vers le cou' },
+          { id: 'f_machoire_w2_t4', label: 'Highlighter sur le menton pour l\'allonger visuellement' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Précision maquillage',
+        tasks: [
+          { id: 'f_machoire_w3_t1', label: 'Mewing continu (habitude permanente)' },
+          { id: 'f_machoire_w3_t2', label: 'Contouring au pinceau biseauté pour plus de précision' },
+          { id: 'f_machoire_w3_t3', label: 'Mâcher des aliments durs (carottes, pommes)' },
+          { id: 'f_machoire_w3_t4', label: 'Massage de la mâchoire 5 min/jour' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Consolidation',
+        tasks: [
+          { id: 'f_machoire_w4_t1', label: 'Maintenir toutes les habitudes des semaines précédentes' },
+          { id: 'f_machoire_w4_t2', label: 'Tester contour crème vs poudre : noter ce qui convient le mieux' },
+          { id: 'f_machoire_w4_t3', label: 'Se photographier de face et de profil pour mesurer les progrès' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'hyoide',
+    icon: '🔵',
+    color: '#8B5CF6',
+    image: require('@/assets/images/programmes/hyoide.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Prise de conscience',
+        tasks: [
+          { id: 'f_hyoide_w1_t1', label: 'Exercice de déglutition consciente x20/jour' },
+          { id: 'f_hyoide_w1_t2', label: 'Highlighter au centre du cou pour l\'allonger visuellement' },
+          { id: 'f_hyoide_w1_t3', label: 'Garder le menton légèrement rentré en permanence' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Activation + Maquillage',
+        tasks: [
+          { id: 'f_hyoide_w2_t1', label: 'Humming (fredonner) 5 min/jour' },
+          { id: 'f_hyoide_w2_t2', label: 'Éviter de regarder le téléphone en baissant la tête' },
+          { id: 'f_hyoide_w2_t3', label: 'Bronzer légèrement sous le menton pour réduire visuellement le double menton' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Renforcement',
+        tasks: [
+          { id: 'f_hyoide_w3_t1', label: 'Exercice : langue contre palais en avalant' },
+          { id: 'f_hyoide_w3_t2', label: 'Neck curls 3x10/jour' },
+          { id: 'f_hyoide_w3_t3', label: 'Contouring sous le menton avec une teinte foncée bien estompée' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Consolidation',
+        tasks: [
+          { id: 'f_hyoide_w4_t1', label: 'Maintenir posture de tête correcte en permanence' },
+          { id: 'f_hyoide_w4_t2', label: 'Exercices de résistance du cou 3x15' },
+          { id: 'f_hyoide_w4_t3', label: 'Étirements matin et soir' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'posture',
+    icon: '🧍',
+    color: '#10B981',
+    image: require('@/assets/images/programmes/posture.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Correction de base',
+        tasks: [
+          { id: 'f_posture_w1_t1', label: 'Régler la hauteur de l\'écran à hauteur des yeux' },
+          { id: 'f_posture_w1_t2', label: 'Wall angel 3x10/jour' },
+          { id: 'f_posture_w1_t3', label: 'Marcher 20 min/jour en conscientisant la posture' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Renforcement',
+        tasks: [
+          { id: 'f_posture_w2_t1', label: 'Stretching épaules matin 5 min' },
+          { id: 'f_posture_w2_t2', label: 'Plank 3x30 sec/jour' },
+          { id: 'f_posture_w2_t3', label: 'Alerte posture toutes les heures sur le téléphone' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Stabilisation',
+        tasks: [
+          { id: 'f_posture_w3_t1', label: 'Cat-cow stretch 3x10/jour' },
+          { id: 'f_posture_w3_t2', label: 'Pilates 15 min/jour (gainage doux)' },
+          { id: 'f_posture_w3_t3', label: 'Oreiller adapté (ni trop haut, ni trop bas)' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Ancrage',
+        tasks: [
+          { id: 'f_posture_w4_t1', label: 'Yoga ou pilates 20 min/jour' },
+          { id: 'f_posture_w4_t2', label: 'Vérifier posture devant le miroir chaque matin' },
+          { id: 'f_posture_w4_t3', label: 'Marche consciente 30 min/jour' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'yeux',
+    icon: '👁️',
+    color: '#F59E0B',
+    image: require('@/assets/images/programmes/yeux.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Routine + maquillage de base',
+        tasks: [
+          { id: 'f_yeux_w1_t1', label: 'Crème contour des yeux chaque soir' },
+          { id: 'f_yeux_w1_t2', label: 'Dormir 7-8h minimum' },
+          { id: 'f_yeux_w1_t3', label: 'Mascara : courber les cils avant d\'appliquer pour ouvrir le regard' },
+          { id: 'f_yeux_w1_t4', label: 'Compresses froides le matin 5 min (dépoches)' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Traitement + techniques',
+        tasks: [
+          { id: 'f_yeux_w2_t1', label: 'Vitamine C sérum le matin (pour les cernes)' },
+          { id: 'f_yeux_w2_t2', label: 'Réduire le sel (rétention d\'eau = poches)' },
+          { id: 'f_yeux_w2_t3', label: 'Eyeliner : trait fin au ras des cils pour épaissir sans alourdir' },
+          { id: 'f_yeux_w2_t4', label: 'Crayon blanc/nude sur la ligne d\'eau pour agrandir le regard' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Drainage + mise en valeur',
+        tasks: [
+          { id: 'f_yeux_w3_t1', label: 'Massage drainage lymphatique contour yeux (gua sha)' },
+          { id: 'f_yeux_w3_t2', label: 'Pas d\'écrans 1h avant de dormir' },
+          { id: 'f_yeux_w3_t3', label: 'Apprendre le cut crease basique pour rehausser la paupière' },
+          { id: 'f_yeux_w3_t4', label: 'Mascara fibres + recourbe-cils pour ouvrir le regard au maximum' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Consolidation',
+        tasks: [
+          { id: 'f_yeux_w4_t1', label: 'Rétinol contour yeux (nuit, 2x/semaine)' },
+          { id: 'f_yeux_w4_t2', label: 'Fard adapté à sa morphologie (yeux ronds, en amande, tombants)' },
+          { id: 'f_yeux_w4_t3', label: 'Lunettes de soleil quotidiennes (protection UV)' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'cheveux',
+    icon: '💇',
+    color: '#EC4899',
+    image: require('@/assets/images/programmes/cheveux.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Diagnostic',
+        tasks: [
+          { id: 'f_cheveux_w1_t1', label: 'Identifier son type de cheveux (sec, gras, mixte, frisé)' },
+          { id: 'f_cheveux_w1_t2', label: 'Shampoing max 3x/semaine + après-shampoing systématique' },
+          { id: 'f_cheveux_w1_t3', label: 'Identifier la coupe qui valorise la morphologie du visage' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Stimulation + Styling',
+        tasks: [
+          { id: 'f_cheveux_w2_t1', label: 'Massage crânien 5 min/jour (stimulation du cuir chevelu)' },
+          { id: 'f_cheveux_w2_t2', label: 'Huile d\'argan ou de ricin 1x/semaine avant shampoing' },
+          { id: 'f_cheveux_w2_t3', label: 'Apprendre un brushing simple pour encadrer le visage' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Nutrition capillaire',
+        tasks: [
+          { id: 'f_cheveux_w3_t1', label: 'Masque capillaire 1x/semaine' },
+          { id: 'f_cheveux_w3_t2', label: 'Protection thermique avant lisseur ou boucleur' },
+          { id: 'f_cheveux_w3_t3', label: 'Alimentation riche en protéines, biotine et zinc' },
+          { id: 'f_cheveux_w3_t4', label: 'Tester une coiffure qui encadre le visage (waves, balayage)' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Entretien',
+        tasks: [
+          { id: 'f_cheveux_w4_t1', label: 'Routine complète établie et maintenue' },
+          { id: 'f_cheveux_w4_t2', label: 'Couper les pointes pour maintenir la santé' },
+          { id: 'f_cheveux_w4_t3', label: 'Taie d\'oreiller en soie (moins de friction nocturne)' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'peau',
+    icon: '✨',
+    color: '#F97316',
+    image: require('@/assets/images/programmes/peau.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Skincare + base maquillage',
+        tasks: [
+          { id: 'f_peau_w1_t1', label: 'Nettoyant doux matin et soir + démaquillage complet le soir' },
+          { id: 'f_peau_w1_t2', label: 'SPF 30+ chaque matin (sans exception)' },
+          { id: 'f_peau_w1_t3', label: 'Choisir une base de teint adaptée à son type de peau (BB cream, fond de teint)' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Traitement + Application',
+        tasks: [
+          { id: 'f_peau_w2_t1', label: 'Vitamine C sérum le matin' },
+          { id: 'f_peau_w2_t2', label: 'Rétinol 0.025% 2x/semaine le soir' },
+          { id: 'f_peau_w2_t3', label: 'Technique fond de teint : éponge humide pour un fini naturel' },
+          { id: 'f_peau_w2_t4', label: 'Blush : placement selon la morphologie du visage' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Intensification + Contouring',
+        tasks: [
+          { id: 'f_peau_w3_t1', label: 'Rétinol 3x/semaine' },
+          { id: 'f_peau_w3_t2', label: 'Masque argile 1x/semaine' },
+          { id: 'f_peau_w3_t3', label: 'Contouring léger : poudre bronze sur les tempes, sous les pommettes' },
+          { id: 'f_peau_w3_t4', label: 'Highlighter sur les pommettes et l\'arête du nez' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Consolidation',
+        tasks: [
+          { id: 'f_peau_w4_t1', label: 'Routine matin/soir complète sans interruption' },
+          { id: 'f_peau_w4_t2', label: 'Setting spray pour tenir le maquillage toute la journée' },
+          { id: 'f_peau_w4_t3', label: 'Bilan peau : noter les améliorations observées' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'sommeil',
+    icon: '🌙',
+    color: '#6366F1',
+    image: require('@/assets/images/programmes/sommeil.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Hygiène du sommeil',
+        tasks: [
+          { id: 'f_sommeil_w1_t1', label: 'Se coucher avant 23h30' },
+          { id: 'f_sommeil_w1_t2', label: 'Chambre à 18-19°C' },
+          { id: 'f_sommeil_w1_t3', label: 'Taie d\'oreiller en soie (moins de froissements cutanés et capillaires)' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Routine beauté nocturne',
+        tasks: [
+          { id: 'f_sommeil_w2_t1', label: 'Appliquer crème de nuit + sérum + contour yeux avant de dormir' },
+          { id: 'f_sommeil_w2_t2', label: 'Pas de caféine après 15h' },
+          { id: 'f_sommeil_w2_t3', label: 'Attacher les cheveux en tresse lâche pour éviter les cassures' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Régulation',
+        tasks: [
+          { id: 'f_sommeil_w3_t1', label: 'Se lever à heure fixe chaque jour (même le week-end)' },
+          { id: 'f_sommeil_w3_t2', label: 'Exposition à la lumière naturelle le matin 10 min' },
+          { id: 'f_sommeil_w3_t3', label: 'Magnésium glycinate avant de dormir' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Optimisation',
+        tasks: [
+          { id: 'f_sommeil_w4_t1', label: '7-8h de sommeil maintenu chaque nuit' },
+          { id: 'f_sommeil_w4_t2', label: 'Masque de nuit hydratant 2x/semaine' },
+          { id: 'f_sommeil_w4_t3', label: 'Évaluer la qualité du sommeil et ajuster si besoin' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'symetrie',
+    icon: '⚖️',
+    color: '#D946EF',
+    image: require('@/assets/images/programmes/symetrie.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Prise de conscience',
+        tasks: [
+          { id: 'f_symetrie_w1_t1', label: 'Mewing symétrique (langue bien centrée sur le palais)' },
+          { id: 'f_symetrie_w1_t2', label: 'Dormir sur le dos (éviter l\'asymétrie de pression)' },
+          { id: 'f_symetrie_w1_t3', label: 'Identifier ses asymétries au maquillage et apprendre à les corriger' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Correction posturale + Maquillage',
+        tasks: [
+          { id: 'f_symetrie_w2_t1', label: 'Exercice : sourire symétrique devant miroir x10' },
+          { id: 'f_symetrie_w2_t2', label: 'Éviter de se reposer la joue sur la main' },
+          { id: 'f_symetrie_w2_t3', label: 'Contouring correctif : estomper le côté plus large, éclairer le côté plus étroit' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Exercices ciblés',
+        tasks: [
+          { id: 'f_symetrie_w3_t1', label: 'Gonfler les joues alternativement 3x15' },
+          { id: 'f_symetrie_w3_t2', label: 'Vérifier que la tête ne penche pas d\'un côté en permanence' },
+          { id: 'f_symetrie_w3_t3', label: 'Blush appliqué symétriquement pour équilibrer les deux côtés' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Ancrage',
+        tasks: [
+          { id: 'f_symetrie_w4_t1', label: 'Maintenir toutes les habitudes posturales' },
+          { id: 'f_symetrie_w4_t2', label: 'Exercices faciaux 10 min/jour' },
+          { id: 'f_symetrie_w4_t3', label: 'Se photographier de face pour suivre l\'évolution' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'sourcils',
+    icon: '〰️',
+    color: '#92400E',
+    image: require('@/assets/images/programmes/peau.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Diagnostic',
+        tasks: [
+          { id: 'sourcils_w1_t1', label: 'Observer la forme naturelle de ses sourcils sans les toucher' },
+          { id: 'sourcils_w1_t2', label: 'Identifier sa morphologie de visage pour trouver la forme idéale' },
+          { id: 'sourcils_w1_t3', label: 'Ne pas épiler pendant 2 semaines pour laisser repousser' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Entretien',
+        tasks: [
+          { id: 'sourcils_w2_t1', label: 'Épiler uniquement sous l\'arcade (jamais au-dessus)' },
+          { id: 'sourcils_w2_t2', label: 'Brosser les sourcils avec un spoolie chaque matin' },
+          { id: 'sourcils_w2_t3', label: 'Remplir avec une poudre à sourcils de la couleur naturelle' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Définition',
+        tasks: [
+          { id: 'sourcils_w3_t1', label: 'Crayon à sourcils : trait par trait pour un effet naturel et précis' },
+          { id: 'sourcils_w3_t2', label: 'Fixer avec un gel à sourcils transparent après application' },
+          { id: 'sourcils_w3_t3', label: 'Lamination DIY ou en institut pour un effet "brow lift"' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Maîtrise',
+        tasks: [
+          { id: 'sourcils_w4_t1', label: 'Maîtriser l\'arc parfait selon la morphologie du visage' },
+          { id: 'sourcils_w4_t2', label: 'Tester le rehaussement (henna brows ou teinture)' },
+          { id: 'sourcils_w4_t3', label: 'Maintenir la routine d\'entretien hebdomadaire' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'levres',
+    icon: '💋',
+    color: '#E11D48',
+    image: require('@/assets/images/programmes/symetrie.jpg'),
+    weeks: [
+      {
+        weekNumber: 1,
+        title: 'Soin',
+        tasks: [
+          { id: 'levres_w1_t1', label: 'Exfolier les lèvres 2x/semaine (sucre + huile)' },
+          { id: 'levres_w1_t2', label: 'Baume à lèvres chaque soir avant de dormir' },
+          { id: 'levres_w1_t3', label: 'Boire 2L d\'eau/jour (hydratation = lèvres pulpeuses)' },
+        ],
+      },
+      {
+        weekNumber: 2,
+        title: 'Technique de base',
+        tasks: [
+          { id: 'levres_w2_t1', label: 'Tracer le contour avec un crayon lèvres légèrement en dehors pour volumiser' },
+          { id: 'levres_w2_t2', label: 'Gloss au centre des lèvres pour l\'effet 3D' },
+          { id: 'levres_w2_t3', label: 'Choisir des teintes adaptées à son teint de peau' },
+        ],
+      },
+      {
+        weekNumber: 3,
+        title: 'Volume',
+        tasks: [
+          { id: 'levres_w3_t1', label: 'Overline subtile avec le crayon pour des lèvres visuellement plus pleines' },
+          { id: 'levres_w3_t2', label: 'Plumping gloss (avec menthol ou acide hyaluronique)' },
+          { id: 'levres_w3_t3', label: 'Highlighter sur l\'arc de Cupidon pour le définir' },
+        ],
+      },
+      {
+        weekNumber: 4,
+        title: 'Maîtrise',
+        tasks: [
+          { id: 'levres_w4_t1', label: 'Lip liner + rouge à lèvres mat (tenue longue durée)' },
+          { id: 'levres_w4_t2', label: 'Tester l\'ombré lips (plus foncé au contour, plus clair au centre)' },
+          { id: 'levres_w4_t3', label: 'Maintenir exfoliation + soin chaque semaine' },
         ],
       },
     ],
@@ -511,5 +973,17 @@ export const PROGRAMME_LABELS: Record<string, { fr: string; en: string; descFr: 
     en: 'Facial Symmetry',
     descFr: 'Habitudes et exercices pour améliorer la symétrie du visage',
     descEn: 'Habits and exercises to improve facial symmetry',
+  },
+  sourcils: {
+    fr: 'Sourcils',
+    en: 'Eyebrows',
+    descFr: 'Forme, remplissage et entretien pour des sourcils parfaits',
+    descEn: 'Shape, fill and maintain perfect eyebrows',
+  },
+  levres: {
+    fr: 'Lèvres',
+    en: 'Lips',
+    descFr: 'Soin et maquillage pour des lèvres pulpeuses et définies',
+    descEn: 'Care and makeup for full and defined lips',
   },
 };

@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { useState, useCallback } from 'react';
+import { StyleSheet, View, Text, Pressable, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ import { Colors } from '@/constants/theme';
 import { Layout } from '@/constants/layout';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/contexts/auth-context';
-import { PROGRAMMES, PROGRAMME_LABELS } from '@/constants/programmes';
+import { PROGRAMMES, PROGRAMMES_FEMALE, PROGRAMME_LABELS } from '@/constants/programmes';
 import { getProgrammeProgress } from '@/services/programme-service';
 
 interface ProgressMap {
@@ -26,6 +26,7 @@ export default function ProgrammesScreen() {
   const { user, userId } = useAuth();
   const isPremium = user?.isPremium ?? false;
   const lang = i18n.language?.startsWith('fr') ? 'fr' : 'en';
+  const programmes = user?.gender === 'femme' ? PROGRAMMES_FEMALE : PROGRAMMES;
 
   const [progressMap, setProgressMap] = useState<ProgressMap>({});
   const [loading, setLoading] = useState(true);
@@ -60,7 +61,7 @@ export default function ProgrammesScreen() {
       router.push('/paywall');
       return;
     }
-    router.push({ pathname: '/programme/[id]', params: { id: programmeId } });
+    router.push({ pathname: '/programme/[id]' as any, params: { id: programmeId } });
   };
 
   return (
@@ -78,7 +79,7 @@ export default function ProgrammesScreen() {
           <ActivityIndicator size="large" color={colors.tint} style={{ marginTop: 40 }} />
         ) : (
           <View style={styles.grid}>
-            {PROGRAMMES.map((programme) => {
+            {programmes.map((programme) => {
               const label = PROGRAMME_LABELS[programme.id];
               const name = lang === 'fr' ? label.fr : label.en;
               const desc = lang === 'fr' ? label.descFr : label.descEn;
@@ -103,16 +104,14 @@ export default function ProgrammesScreen() {
                     },
                   ]}
                 >
-                  {/* Lock overlay */}
-                  {locked && (
-                    <View style={[styles.lockBadge, { backgroundColor: colors.background }]}>
-                      <IconSymbol name="lock.fill" size={12} color={colors.textSecondary} />
-                    </View>
-                  )}
-
-                  {/* Icon */}
-                  <View style={[styles.iconCircle, { backgroundColor: programme.color + '18' }]}>
-                    <Text style={styles.icon}>{programme.icon}</Text>
+                  {/* Cover image */}
+                  <View style={styles.cardImageContainer}>
+                    <Image source={programme.image} style={styles.cardImage} resizeMode="cover" />
+                    {locked && (
+                      <View style={styles.lockOverlay}>
+                        <IconSymbol name="lock.fill" size={16} color="#fff" />
+                      </View>
+                    )}
                   </View>
 
                   {/* Content */}
@@ -252,6 +251,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 4,
     fontWeight: '500',
+  },
+  cardImageContainer: {
+    width: '100%',
+    height: 90,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  lockOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   premiumBanner: {
     flexDirection: 'row',
